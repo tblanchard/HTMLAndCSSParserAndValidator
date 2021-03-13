@@ -149,6 +149,11 @@ HtmlParseNode >> hasAncestor: aString [
 	^(self firstAncestor: aString) notNil
 ]
 
+{ #category : #accessing }
+HtmlParseNode >> index [ 
+	^self parent children indexOf: self
+]
+
 { #category : #testing }
 HtmlParseNode >> innerContents [
 
@@ -222,6 +227,22 @@ HtmlParseNode >> level [
 	^level
 ]
 
+{ #category : #accessing }
+HtmlParseNode >> nextSibling [ 
+	^self parent children size = self index 
+		ifTrue: [ nil ] 
+		ifFalse: [ self parent children at: self index + 1 ]
+]
+
+{ #category : #accessing }
+HtmlParseNode >> nextSiblings [
+	| idx |
+	idx := self index.
+	^self parent children size = idx 
+		ifTrue: [ #() ] 
+		ifFalse: [ self parent children copyFrom: idx + 1 to: self parent children size ]
+]
+
 { #category : #iterating }
 HtmlParseNode >> nodesDo: aBlock [
 
@@ -275,6 +296,22 @@ HtmlParseNode >> prefix [
 HtmlParseNode >> prefixId [
 
 	^self uniqueId
+]
+
+{ #category : #accessing }
+HtmlParseNode >> previousSibling [ 
+	^self index = 1
+		ifTrue: [ nil ] 
+		ifFalse: [ self parent children at: self index - 1 ]
+]
+
+{ #category : #accessing }
+HtmlParseNode >> previousSiblings [
+	| idx |
+	idx := self index.
+	^idx = 1
+		ifTrue: [ #() ] 
+		ifFalse: [ self parent children copyFrom: 1 to: idx-1 ]
 ]
 
 { #category : #accessing }
@@ -340,7 +377,7 @@ HtmlParseNode >> suffixId [
 HtmlParseNode >> tag [
 	"Answer the value of tag"
 
-	^ tag isNil ifFalse: [tag asLowercase] ifTrue: [tag]
+	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }
